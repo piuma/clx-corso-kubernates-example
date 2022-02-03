@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php
+  labels:
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+        tier: backend
+    spec:
+      containers:
+      - name: php
+        image: php:7.3-fpm
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: code-vol
+      initContainers:
+      - name: install
+        image: php:7.3-fpm
+        command: ["sh" , "-c"]
+        args: ['echo "<?php echo phpinfo(); ?>" > /var/www/html/index.php']
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: code-vol
+      volumes:
+      - name: code-vol
+        hostPath:
+          path: /home/piuma/babel/clx-corso-kubernates/example/code
+          type: Directory
+
+
+
